@@ -1,0 +1,104 @@
+//结构体用于临时保存数组相关信息
+typedef struct array{
+string name;
+int length;
+};
+//结构体用于临时保存子程序相关信息
+typedef struct function{
+string name;
+string type;
+int len;
+int fn=0;
+int off=0;
+string params[10];
+string types[10];
+int lens[10];
+};
+typedef struct params{
+    string name;
+    string csb[10];
+    string types[10];
+    int lens[10];
+    int fn=0;
+};
+
+//符号表生成
+string fhb[50][4];
+string szb[10][4];
+string hsb[10][4];
+Stack s;
+Stack s1;
+Stack s2;
+Stack s3;
+Stack s4;
+stack<array> s5;
+stack<array> s6;
+stack<params> s7;
+stack<params> s8;
+string type;
+int len;
+int m=1;//处理到fhb第几项
+int position=-1;//数组表第几项
+int page=-1;//函数表第几项
+int offset;
+void outputfhb()//输出符号表函数
+{
+	int i=0;
+	fhb[0][3]=int2str(offset);
+	cout<<"\n符号表如下:"<<endl;
+	while(fhb[i][0]!="#")
+	{
+		cout<<fhb[i][0]<<"_"<<fhb[i][1]<<"_"<<fhb[i][2]<<"_"<<fhb[i][3]<<endl;
+		i++;
+	}
+	if(position!=-1){
+        i=0;
+        cout<<"\n数组表如下:"<<endl;
+        while(i<=position)
+        {
+           cout<<szb[i][0]<<"_"<<szb[i][1]<<"_"<<szb[i][2]<<"_"<<szb[i][3]<<endl;
+           i++;
+        }
+	}
+	if(page!=-1){
+        i=0;
+        cout<<"\n函数表如下:"<<endl;
+        while(i<=page)
+        {
+           cout<<hsb[i][0]<<"_"<<hsb[i][1]<<"_"<<hsb[i][2]<<"_"<<hsb[i][3]<<endl;
+           i++;
+        }
+	}
+	while(!s7.empty())
+    {
+        int off=0;
+        i=0;
+        params para=s7.top();
+        s7.pop();
+        cout<<para.name<<"函数的参数表如下:"<<endl;
+        while(i<para.fn)
+        {
+            cout<<para.csb[i]<<"_"<<para.types[i]<<"_"<<"V"<<"_"<<off<<endl;
+            off+=para.lens[i];
+            i++;
+        }
+    }
+}
+
+int searchfhb(string a)//搜索符号表并若成功返回变量位置，用以判别中间变量的类型的
+{
+	int i=0;
+	while(fhb[i][0]!="#")
+	{
+		if(a==fhb[i][0])
+		{
+			return i;
+		}
+		else
+		{
+			i++;
+		}
+	}
+	return 0;
+}
+//填符号表第二部分完成
