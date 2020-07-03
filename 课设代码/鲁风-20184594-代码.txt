@@ -1,0 +1,148 @@
+void func0()//填入符号表第一项，函数的名字
+{
+	fhb[0][0]=biaoshifubiao[token[ip].code];
+	fhb[0][1]="/";
+	fhb[0][2]="f";
+}
+void func1()//总体性质的执行，执行且只执行一次
+{
+	int i;
+	for(i=1;i<50;i++)
+	{
+		fhb[i][2]="V";
+	}
+	offset=0;
+	for(i=0;i<10;i++)
+	{
+	    szb[i][0]="0";
+	}
+	for(i=0;i<10;i++)
+	{
+	    hsb[i][0]="0";
+	}
+
+}
+void func2()//在一个声明变量意群模块里，依次把标识符压进栈中
+{
+    s1.Push(biaoshifubiao[token[ip].code]);
+}
+void func9(string up,string type,string len)   //将符号栈中元素与数组栈中元素对比，遇到数组时对数组表进行赋值
+{
+    position++;
+    szb[position][1]=up;
+    szb[position][2]=type;
+    szb[position][3]=len;
+}
+
+void func3()//设置整型填入标识符的性质
+{
+	type="i";
+	len=4;
+}
+void func4()//设置实型填入标识符的性质
+{
+	type="r";
+	len=8;
+}
+void func5()//设置字符型填入标识符的性质
+{
+	type="c";
+	len=1;
+}
+
+void func6()//声明部分填表算法，按定义的顺序填表，性质对应，最后的offset更新为下一个要填的变量的地址
+{
+    string* aname=new string;
+    int     alength;
+    if(!(s6.empty())){
+        *aname=s6.top().name;
+        alength=s6.top().length;
+        s6.pop();
+    }
+	while(!(s2.isEmpty()))
+	{
+		fhb[m][0]=s2.Pop();
+		if(*aname==fhb[m][0])
+        {
+            fhb[m][1]="a";
+            fhb[m][3]=int2str(offset);
+            offset=offset+len*alength;
+            int up=alength-1;
+            func9(int2str(up),type,int2str(len));
+            if(!(s6.empty()))
+            {
+                *aname=s6.top().name;
+                alength=s6.top().length;
+                s6.pop();
+            }
+		}
+		else
+        {
+            fhb[m][1]=type;
+            fhb[m][3]=int2str(offset);
+            offset=offset+len;
+        }
+		m++;
+	}
+}
+
+void func7()//S2用于恢复定义变量时的顺序,将符号栈中元素倒序
+{
+	while(!(s1.isEmpty()))
+	{
+		s2.Push(s1.Pop());
+	}
+	while(!(s5.empty()))
+	{
+	    s6.push(s5.top());
+	    s5.pop();
+	}
+
+}
+
+void func8(string na,int len)          //在识别标识符后判断是否为数组时将该标识符入数组栈
+{
+    array a;
+    a.name=na;
+    a.length=len;
+    s5.push(a);
+}
+
+
+void FUNC1()//根据中间变量如果为整型的话就有如下性质
+{
+	type="i";
+	len=4;
+}
+void FUNC2()//根据中间变量如果为实型的话就有如下性质
+{
+	type="r";
+	len=8;
+}
+void FUNC3()//根据中间变量如果为字符型型的话就有如下性质
+{
+	type="c";
+	len=1;
+}
+/*void FUNC4(string c)//每生成一个四元式将其中的t...压进去，注意插入函数位置
+{
+	s1.Push(c);
+}*/
+void FUNC5()//还原一个四元式意群的中间变量的顺序存在S4中
+{
+	while(!(s3.isEmpty()))
+	{
+		s4.Push(s3.Pop());
+	}
+}
+void FUNC6()//填表算法，同上
+{
+		while(!(s4.isEmpty()))
+	{
+		fhb[m][0]=s4.Pop();
+		fhb[m][1]=type;
+		fhb[m][3]=int2str(offset);
+		offset=offset+len;
+		m++;
+		}
+}
