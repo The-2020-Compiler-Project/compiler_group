@@ -1,0 +1,380 @@
+//子程序相关函数
+int ANOUNCE_FUNCTION()
+{
+    string str_id,str_type;
+    int returnNum;
+    function fun;//用于保存子程序信息
+    int back=0;
+	if((token[ip].content[0]=='k')&&(token[ip].code==1))/*是var*/
+	{
+		ip++;
+	}
+	else
+	{
+		back++;
+		return 0;
+	}
+	if(token[ip].content[0]=='i')/*正确识别一个标示符*/
+		{
+		    str_id=biaoshifubiao[token[ip].code];
+		    SEARCH1(biaoshifubiao[token[ip].code]);
+		    fun.name=biaoshifubiao[token[ip].code];
+		    fun.fn=0;
+		    for(int i=0;i<10;i++)
+            {
+            fun.params[i]="#";
+            fun.types[i]="#";
+            fun.lens[i]=0;
+            }
+			ip++;
+		}
+    else
+	{
+		back++;
+		return 0;
+	}
+	if((token[ip].content[0]=='p')&&(token[ip].code==10))/*是(*/
+    {
+        ip++;
+    }
+     else
+	{
+		back++;
+		return 0;
+	}
+	if(token[ip].content[0]=='i')/*正确识别一个标示符*/
+		{
+		    int k=fun.fn;
+		    fun.params[k]=biaoshifubiao[token[ip].code];
+		    fun.fn++;
+			ip++;
+		}
+    else
+	{
+		back++;
+		return 0;
+	}
+	if((token[ip].content[0]=='p')&&(token[ip].code==2))/*是：*/
+	{
+	    ip++;
+	}
+	else
+	{
+		back++;
+		return 0;
+	}
+
+    returnNum=TYPE();
+	int k=fun.fn-1;
+    if(returnNum==1)/*是type*/
+	{
+	    fun.types[k]="i";
+	    fun.lens[k]=4;
+
+	}else if(returnNum==2)
+	{
+	    fun.types[k]="r";
+	    fun.lens[k]=8;
+
+	}else if(returnNum==3)
+	{
+	   fun.types[k]="c";
+	    fun.lens[k]=1;
+	}
+	else/*不是type*/
+	{
+		back++;
+		return 0;
+	}
+
+	 while(((token[ip].content[0]=='p')&&(token[ip].code==1)))//当是，时
+	{
+	     ip++;
+	     if(token[ip].content[0]=='i')/*正确识别一个标示符*/
+		{
+		    int k=fun.fn;
+		    fun.params[k]=biaoshifubiao[token[ip].code];
+		    fun.fn++;
+			ip++;
+		}
+        else
+	    {
+		back++;
+		return 0;
+        }
+        if((token[ip].content[0]=='p')&&(token[ip].code==2))/*是：*/
+	    {
+	        ip++;
+	    }
+	   else/*是：*/
+	   {
+		  back++;
+		  return 0;
+	   }
+        returnNum=TYPE();
+        int k=fun.fn-1;
+        if(returnNum==1)/*是type*/
+        {
+            fun.types[k]="i";
+            fun.lens[k]=4;
+
+        }else if(returnNum==2)
+        {
+            fun.types[k]="r";
+            fun.lens[k]=8;
+
+        }else if(returnNum==3)
+        {
+            fun.types[k]="c";
+            fun.lens[k]=1;
+        }
+	   else
+	   {
+		back++;
+		return 0;
+	   }
+    }/*while结束*/
+
+    if((token[ip].content[0]=='p')&&(token[ip].code==11))/*是)*/
+    {
+        ip++;
+    }
+     else
+	{
+		back++;
+		return 0;
+	}
+	if((token[ip].content[0]=='p')&&(token[ip].code==2))/*是：*/
+	    {
+	        ip++;
+	    }
+	   else/*不是：*/
+	   {
+		  back++;
+		  return 0;
+	   }
+
+        returnNum=TYPE();
+        if(returnNum==1)/*是type*/
+        {
+            str_type="interger";
+            fun.type="i";
+            fun.len=4;
+
+        }else if(returnNum==2)
+        {
+            str_type="real";
+            fun.type="r";
+            fun.len=8;
+
+        }else if(returnNum==3)
+        {
+            str_type="char";
+            fun.type="c";
+            fun.len=1;
+        }
+	   else
+	   {
+		back++;
+		return 0;
+	   }
+    QUATHANSHUSHENGMING(str_id,str_type);
+    if((token[ip].content[0]=='p')&&(token[ip].code==17))/*是{,code为17*/
+    {
+        ip++;
+    }
+    else
+	   {
+		back++;
+		return 0;
+	   }
+	   if(FUN_SENTENCE()==1)/*是*/
+	   {
+
+	   }
+	   else
+	   {
+
+		back++;
+		return 0;
+	   }
+	   if((token[ip].content[0]=='p')&&(token[ip].code==18))/*是}，code为18*/
+    {
+        ip++;
+    }
+    else
+	   {
+		back++;
+		return 0;
+	   }
+    func10(fun);
+    if(back>0)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+int FUN_SENTENCE()
+{
+	int back=0;
+	if((token[ip].content[0]=='k')&&(token[ip].code==5))/*是begin*/
+	{
+        QUATBEGIN();
+		ip++;
+	}
+	else
+	{
+		back++;
+		return 0;
+	}
+
+	if(!((SEN_SEQUENCE()==1)||(CONDITION()==1)||(CIRCLE()==1)))
+	{
+
+			back++;
+			return 0;
+	}
+    while(((token[ip].content[0]=='p')&&(token[ip].code==3)))
+	{
+	     ip++;
+			if(!((SEN_SEQUENCE()==1)||(CONDITION()==1)||(CIRCLE()==1)))
+			{
+
+			    back++;
+			return 0;
+			}
+	}
+    if(RETURN()==1)
+    {
+     QUATRETURN();
+    }
+    else
+	{
+
+		back++;
+		return 0;
+	}
+	if(!((token[ip].content[0]=='k')&&(token[ip].code==6)))//k6为end
+	{
+
+		back++;
+		return 0;
+	}
+	else
+	{
+	       QUATLAST();
+		 ip++;
+
+	}
+	if(back>0)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+
+int RETURN()
+{
+    int back=0;
+    if((token[ip].content[0]=='k')&&(token[ip].code==13))/*是return*/
+    {
+        ip++;
+    }
+     else
+	{
+		back++;
+		return 0;
+	}
+    if(FACTOR()==1)
+    {
+
+    }
+    else
+	{
+
+		back++;
+		return 0;
+	}
+    if(back>0)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+int FUNCTION()
+{
+    string str_id;
+    int back=0;
+	if(token[ip].content[0]=='i')/*正确识别第一个标示符*/
+		{
+            str_id=biaoshifubiao[token[ip].code];
+			ip++;
+			//cout<<"识别函数名"<<endl;
+		}
+    else
+	{
+		back++;
+		return 0;
+	}
+	if((token[ip].content[0]=='p')&&(token[ip].code==10))/*是(*/
+    {
+        ip++;
+    }
+     else
+	{
+		back++;
+		return 0;
+	}
+	if(token[ip].content[0]=='i')/*正确识别第一个标示符*/
+		{
+		    cout<<"识别第一个参数"<<endl;
+			ip++;
+		}
+    else
+	{
+		back++;
+		return 0;
+	}
+	while(((token[ip].content[0]=='p')&&(token[ip].code==1)))/*p1是逗号*/
+	{
+		ip++;
+		if(token[ip].content[0]=='i')
+		{
+			ip++;
+		}
+		else
+        {
+            back++;
+            return 0;
+        }
+	}
+	if((token[ip].content[0]=='p')&&(token[ip].code==11))/*是)*/
+    {
+        ip++;
+    }
+     else
+	{
+		back++;
+		return 0;
+	}
+	QUATDIAOYONG(str_id);
+	if(back>0)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
