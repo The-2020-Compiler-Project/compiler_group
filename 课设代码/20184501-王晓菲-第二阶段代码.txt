@@ -1,0 +1,304 @@
+int EXPRESSION()
+{
+	int back=0;
+	if(TERM()==0)
+	{
+		back++;
+		return 0;
+	}
+
+	while(((token[ip].content[0]=='p')&&(token[ip].code==7))||((token[ip].content[0]=='p')&&(token[ip].code==8)))//p7为加号
+	{
+			ip++;
+		if(TERM()==0)
+		{
+			back++;
+			return 0;
+		}
+		if(((token[ip].content[0]=='p')&&(token[ip].code==7)))
+		QUATJIA();
+		else
+        QUATJIAN();
+		jilu++;
+	}
+	FUNC5();
+	FUNC6();
+	if(back>0)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+int TERM()
+{
+	int back=0;
+	if(FACTOR()==0)
+	{
+		back++;
+		return 0;
+	}//否则FACTOR（）执行一遍，再判断是否递归执行
+	while(((token[ip].content[0]=='p')&&(token[ip].code==5))||((token[ip].content[0]=='p')&&(token[ip].code==6)))//p5为乘号
+	{
+		ip++;
+		if(FACTOR()==0)
+		{
+			back++;
+			return 0;
+		}
+		if(((token[ip].content[0]=='p')&&(token[ip].code==5)))
+		QUATCHENGE();
+		else
+        QUATCHU();
+		jilu++;
+	}
+
+	if(back>0)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+
+int FACTOR()
+{
+    string str;
+	int back=0;
+	if((token[ip].content[0]=='i')||(token[ip].content[0]=='c'))/*是标识符或常量*/
+	{
+		if(token[ip].content[0]=='i')
+		{
+			str=biaoshifubiao[token[ip].code];
+			ip++;
+			int returnNum=ARRAY();
+			if(returnNum==1||returnNum==2)
+			{
+			    if(returnNum==2){
+                   string length=changshubiao[token[ip-2].code];
+                   str+="["+length+"]";
+			    }
+            s.Push(str);
+			return 1;
+		    }else
+		     s.Push(str);
+		}
+
+		if(token[ip].content[0]=='c')
+		{
+			s.Push(changshubiao[token[ip].code]);
+			ip++;
+			return 1;
+		}
+
+
+
+	}
+
+	if((token[ip].content[0]=='p')&&(token[ip].code==10))/*是左括号*/
+	{
+	ip++;
+	}
+	else
+	{
+		back++;
+		return 0;
+	}
+
+	if(EXPRESSION()==0)
+	{
+		back++;
+		return 0;
+	}
+	if((token[ip].content[0]=='p')&&(token[ip].code==11))/*是右括号*/
+	{
+		ip++;
+	}
+	else
+	{
+		back++;
+		return 0;
+	}
+	if(back>0)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+//声明语句、赋值语句及算术表达式语法分析结束
+
+//条件语句和循环语句语法分析的开始
+int CONDITION()
+{
+	int back=0;
+	if(!((token[ip].content[0]=='k')&&(token[ip].code==7)))/*不是if*/
+	{
+		back++;
+		return 0;
+	}
+	 else
+	{
+		ip++;
+	}
+	if(BOOL()==0)
+	{
+		back++;
+		return 0;
+	}
+	 if(!((token[ip].content[0]=='k')&&(token[ip].code==8)))//k8为then
+	{
+		back++;
+		return 0;
+	}
+	else
+	{
+		QUATTHEN();
+		jilu++;//很重要，不遗漏
+		ip++;
+	}
+	if(SEN_SEQUENCE()==0)
+	{
+		back++;
+		return 0;
+	}
+
+	if(((token[ip].content[0]=='k')&&(token[ip].code==9)))/*是else*/
+	{
+		QUATELSE();
+	     ip++;
+       if(SEN_SEQUENCE()==0)
+	     {
+		   back++;
+		   return 0;
+	     }
+        if((token[ip].content[0]=='k')&&(token[ip].code==12))/*是ifend*/
+        {
+            QUATIFEND();
+            ip++;
+        }
+	}
+
+	//QUATIFEND();
+
+	if(back>0)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+int BOOL()
+{
+	int back=0;
+	if(FACTOR()==0)
+{
+ back++;
+ return 0;
+}
+if(!(token[ip].content[0]=='p'))
+{
+ back++;
+ return 0;
+}
+
+if(!((token[ip].code==12)||(token[ip].code==13)||(token[ip].code==14)))
+{
+ back++;
+ return 0;
+}
+else
+{
+	if(token[ip].code==12)//p12为小于号
+	{
+		bo="<";
+	}
+	if(token[ip].code==13)//p13为大于号
+	{
+		bo=">";
+	}
+	if(token[ip].code==14)//p14为判断是否相等
+	{
+		bo="@";
+	}
+ ip++;
+}
+
+if(FACTOR()==0)
+{
+ back++;
+ return 0;
+}
+QUATBOOL();
+
+if(back>0)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+
+int CIRCLE()
+{
+	int back=0;
+	if(!((token[ip].content[0]=='k')&&(token[ip].code==10)))/*不是while*/
+	{
+		back++;
+		return 0;
+	}
+	else
+	{
+	QUATWHILE();
+	 ip++;
+	}
+	if(BOOL()==0)
+	{
+		 back++;
+		 return 0;
+	}
+	if(!((token[ip].content[0]=='k')&&(token[ip].code==11)))/*不是do*/
+	{
+		back++;
+		return 0;
+	}
+	else
+	{
+		QUATDO();
+		jilu++;//很重要，不遗漏
+		 ip++;
+	}
+	if(COM_SENTENCE()==0)
+	{
+       back++;
+	  return 0;
+	}
+
+	QUATWHILEEND();
+
+	if(back>0)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+
+
+}
+//条件语句和循环语句语法分析结束
